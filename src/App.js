@@ -1,16 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
-import React, { useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  const num1 = 0;
-
-  if (num1 == count) {
-    console.log("hola");
-  }
-
   return (
     <div className="App">
       <header className="App-header">
