@@ -49,7 +49,7 @@ const RegistrationPage = () => {
               <Alert
                 key={i}
                 type={true}
-                title="Error iniciando sesión"
+                title="Error en el registro"
                 message={error}
                 onClose={() => handleCloseAlert(i)}
               />
@@ -60,8 +60,8 @@ const RegistrationPage = () => {
                 type="text"
                 label="Número de identificación"
                 placeholder="Ingrese su Número de identificación"
-                name="idUser"
-                register={register("idUser", { required: true })}
+                name="id"
+                register={register("id", { required: true })}
                 errors={errors}
                 errorMessage="El número de identificación es requerido"
               />

@@ -5,6 +5,7 @@ import {
   logoutRequest,
   verifyTokenRequest,
 } from "../api/auth";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -18,9 +19,29 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [roles, setRoles] = useState([]);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const hasRole = (requiredRoles) => {
+    if (!user || !user.roles) return false;
+    return requiredRoles.some((role) =>
+      user.roles.some(
+        (userRole) => userRole.toUpperCase() === role.toUpperCase(),
+      ),
+    );
+  };
+
+  const processToken = (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      setUser(decoded);
+      setIsAuthenticated(true);
+      return decoded;
+    } catch (error) {
+      console.error("Error al decodificar el token:", error);
+      return null;
+    }
+  };
 
   const signup = async (user) => {
     try {
@@ -40,9 +61,10 @@ export const AuthProvider = ({ children }) => {
 
       if (res.data && res.data.token) {
         localStorage.setItem("token", res.data.token);
-        setUser(res.data.user);
-        setIsAuthenticated(true);
-        setErrors([]);
+        const decodedUser = processToken(res.data.token);
+        if (decodedUser) {
+          setErrors([]);
+        }
       }
     } catch (error) {
       setErrors(
@@ -59,7 +81,6 @@ export const AuthProvider = ({ children }) => {
       await logoutRequest();
       localStorage.removeItem("token");
       setUser(null);
-      setRoles([]);
       setIsAuthenticated(false);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
@@ -83,12 +104,11 @@ export const AuthProvider = ({ children }) => {
         return;
       }
       try {
-        const res = await verifyTokenRequest();
-        setUser(res.data);
-        setRoles(res.data.roles || []);
-        setIsAuthenticated(true);
+        await verifyTokenRequest();
+        processToken(token);
       } catch (error) {
         localStorage.removeItem("token");
+        setUser(null);
         setIsAuthenticated(false);
       } finally {
         setLoading(false);
@@ -104,10 +124,10 @@ export const AuthProvider = ({ children }) => {
         signin,
         logout,
         user,
-        roles,
         isAuthenticated,
         errors,
         loading,
+        hasRole,
       }}
     >
       {children}

@@ -6,10 +6,11 @@ import {
   DropdownMenu,
   User,
 } from "@nextui-org/react";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaUsers } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, hasRole } = useAuth();
 
   return (
     <div className="hidden md:flex flex-col w-64 border-r border-gray-200">
@@ -21,10 +22,10 @@ function Navbar() {
               avatarProps={{
                 isBordered: true,
                 color: "primary",
+                name: user?.sub?.[0]?.toUpperCase() || "U",
               }}
               className="transition-transform"
-              description={user?.id}
-              name={user?.username}
+              description={user?.sub}
             />
           </DropdownTrigger>
           <DropdownMenu variant="flat" disabledKeys={["user"]}>
@@ -43,13 +44,22 @@ function Navbar() {
           <h6 className="text-primary-dark text-sm font-bold px-4">
             PRINCIPAL
           </h6>
-          <a
-            href="/home"
+          <Link
+            to="/home"
             className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
           >
             <FaHome className="w-[18px] h-[18px] mr-4" />
             Inicio
-          </a>
+          </Link>
+          {hasRole(["ROLE_Admin"]) && (
+            <Link
+              to="/users"
+              className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+            >
+              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              Usuarios
+            </Link>
+          )}
         </nav>
       </div>
     </div>
