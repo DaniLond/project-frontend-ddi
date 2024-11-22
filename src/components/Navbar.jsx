@@ -7,6 +7,7 @@ import {
   User,
 } from "@nextui-org/react";
 import { FaHome, FaUsers } from "react-icons/fa";
+import { CgCalendarDates } from "react-icons/cg";
 import { Link } from "react-router-dom";
 
 function Navbar() {
@@ -60,6 +61,13 @@ function Navbar() {
               Usuarios
             </Link>
           )}
+          <Link
+            to="/appointment"
+            className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+          >
+            <CgCalendarDates className="w-[18px] h-[18px] mr-4" />
+            Citas
+          </Link>
         </nav>
       </div>
     </div>
