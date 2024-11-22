@@ -60,6 +60,42 @@ function Navbar() {
               Usuarios
             </Link>
           )}
+          {hasRole(["ROLE_Admin"]) && (
+            <Link
+              to="/api/roles"
+              className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+            >
+              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              Roles
+            </Link>
+          )}
+          {hasRole(["ROLE_Admin"]) && (
+            <Link
+              to="/api/cvs"
+              className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+            >
+              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              Gestión de Curriculum
+            </Link>
+          )}
+          {hasRole(["ROLE_Admin"]) && (
+            <Link
+              to="/api/treatments"
+              className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+            >
+              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              Gestión de Tratamientos
+            </Link>
+          )}
+          {hasRole(["ROLE_Veterinary"]) && (
+            <Link
+              to="/api/treatments"
+              className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+            >
+              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              Gestión de Tratamientos
+            </Link>
+          )}
         </nav>
       </div>
     </div>
