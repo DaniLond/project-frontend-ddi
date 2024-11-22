@@ -1,5 +1,4 @@
 import { Input } from "@nextui-org/input";
-import React from "react";
 
 const CustomInput = ({
   type,
@@ -9,26 +8,14 @@ const CustomInput = ({
   name,
   errorMessage,
   errors,
-  value,
-  onChange,
   ...rest
 }) => {
   const isInvalid = errors[name];
 
-  const registerProps =
-    typeof register === "function"
-      ? register(name, {
-          onChange: (e) => {
-            if (onChange) onChange(e);
-          },
-        })
-      : register || {};
-
   return (
     <Input
       type={type}
-      {...registerProps}
-      value={value}
+      {...register}
       label={label}
       placeholder={placeholder}
       name={name}

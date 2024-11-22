@@ -323,7 +323,7 @@ function CustomTable({
         items={sortedItems}
       >
         {(item) => (
-          <TableRow key={item.id || item.name || item.idAppointment}>
+          <TableRow key={item.id || item.name}>
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey)}</TableCell>
             )}
