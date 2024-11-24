@@ -6,7 +6,7 @@ import {
   DropdownMenu,
   User,
 } from "@nextui-org/react";
-import { FaHome, FaUsers } from "react-icons/fa";
+import { FaHome, FaUsers, FaDog, FaKey } from "react-icons/fa";
 import { CgCalendarDates } from "react-icons/cg";
 import { Link } from "react-router-dom";
 
@@ -68,6 +68,22 @@ function Navbar() {
             <CgCalendarDates className="w-[18px] h-[18px] mr-4" />
             Citas
           </Link>
+          <Link
+            to="/pets"
+            className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+          >
+            <FaDog className="w-[18px] h-[18px] mr-4" />
+            Mascotas
+          </Link>
+          {hasRole(["ROLE_Admin"]) && (
+            <Link
+              to="/permissions"
+              className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+            >
+              <FaKey className="w-[18px] h-[18px] mr-4" />
+              Permisos
+            </Link>
+          )}
         </nav>
       </div>
     </div>
