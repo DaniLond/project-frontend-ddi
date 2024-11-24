@@ -1,12 +1,12 @@
-import axios from "./axios";
+import instance from "./axiosInstance";
 
-export const getAllRoles = () => axios.get("/api/roles");
-export const createRole = (role) => axios.post("/api/roles", role);
-export const assignRoleToUser = (userId, roleId) =>
-  axios.post(`/api/roles/assign?userId=${userId}&roleId=${roleId}`);
-export const deleteRole = (roleId) => axios.delete(`/api/roles/${roleId}`);
-export const removeRoleFromUser = (userId, roleId) =>
-  axios.delete(`/api/roles/remove?userId=${userId}&roleId=${roleId}`);
+export const getAllRoles = () => instance.get("/api/roles");
+export const createRole = (role) => instance.post("/api/roles", role);
+// export const assignRoleToUser = (userId, roleId) =>
+//   instance.post(`/api/roles/assign?userId=${userId}&roleId=${roleId}`);
+export const deleteRole = (roleId) => instance.delete(`/api/roles/${roleId}`);
+// export const removeRoleFromUser = (userId, roleId) =>
+//   instance.delete(`/api/roles/remove?userId=${userId}&roleId=${roleId}`);
 export const updateRole = async (roleId, roleData) => {
-  return await axios.put(`/api/roles/${roleId}`, roleData);
+  return await instance.put(`/api/roles/${roleId}`, roleData);
 };

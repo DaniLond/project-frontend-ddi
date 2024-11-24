@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import { useRole } from "../../context/RoleContext";
-import { Button } from "@nextui-org/react";
-import { FaEdit, FaTrash } from "react-icons/fa";
-import { RoleModal } from "./RoleModal";
+import { Button, Chip } from "@nextui-org/react";
+import { FaEdit, FaTrash, FaUsers } from "react-icons/fa";
+import RoleModal from "./RoleModal";
 import CustomTable from "../../components/CustomTable";
 
 function RolePage() {
   const { roles, fetchAllRoles, removeRole } = useRole();
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [roleToEdit, setRoleToEdit] = useState(null);
 
   useEffect(() => {
@@ -17,39 +17,63 @@ function RolePage() {
 
   const handleEdit = (role) => {
     setRoleToEdit(role);
-    setIsEditModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsEditModalOpen(false);
+    setIsModalOpen(false);
     setRoleToEdit(null);
     fetchAllRoles();
   };
 
   const handleDelete = async (id) => {
-    await removeRole(id);
-    fetchAllRoles();
+    if (window.confirm("¿Está seguro de eliminar este rol?")) {
+      try {
+        await removeRole(id);
+        fetchAllRoles();
+      } catch (error) {
+        console.error("Error al eliminar el rol:", error);
+      }
+    }
   };
 
-  // Transformar los roles para incluir id
+  const handleCreateNew = () => {
+    setRoleToEdit(null);
+    setIsModalOpen(true);
+  };
+
+  // Transformar los roles para incluir id y formatear la información de usuarios
   const transformedRoles =
     roles?.map((role) => ({
       ...role,
       id: role.roleId,
+      usersCount: role.users?.length || 0,
     })) || [];
 
   const columns = [
     { name: "ID", uid: "roleId", sortable: true },
     { name: "NOMBRE", uid: "nameRole", sortable: true },
+    { name: "USUARIOS", uid: "users", sortable: true },
     { name: "ACCIONES", uid: "actions" },
   ];
 
   const renderCell = (role, columnKey) => {
     switch (columnKey) {
       case "roleId":
-        return role.roleId;
+        return <span className="text-xs">{role.roleId}</span>;
       case "nameRole":
-        return role.nameRole;
+        return <span className="font-medium">{role.nameRole}</span>;
+      case "users":
+        return (
+          <Chip
+            size="sm"
+            variant="flat"
+            color={role.usersCount > 0 ? "primary" : "default"}
+            startContent={<FaUsers className="text-xs" />}
+          >
+            {role.usersCount} usuario{role.usersCount !== 1 ? "s" : ""}
+          </Chip>
+        );
       case "actions":
         return (
           <div className="flex justify-center gap-2">
@@ -62,16 +86,17 @@ function RolePage() {
             >
               <FaEdit className="text-primary" />
             </Button>
-            {/* <Button
+            <Button
               isIconOnly
               radius="full"
               size="sm"
               variant="light"
               color="danger"
               onPress={() => handleDelete(role.roleId)}
+              isDisabled={role.usersCount > 0}
             >
               <FaTrash className="text-danger" />
-            </Button> */}
+            </Button>
           </div>
         );
       default:
@@ -81,27 +106,33 @@ function RolePage() {
 
   const Modal = () => (
     <RoleModal
-      isOpen={isEditModalOpen}
+      isOpen={isModalOpen}
       onClose={handleCloseModal}
-      roleToEdit={roleToEdit}
+      editingRole={roleToEdit}
     />
   );
 
   return (
     <DefaultLayout>
-      <div className="p-2">
-        <h2 className="text-gray-800 text-2xl font-bold">Roles</h2>
-      </div>
+      <div className="p-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-gray-800 text-2xl font-bold">Roles</h2>
+          <Button color="primary" onPress={handleCreateNew} className="px-4">
+            Crear Nuevo Rol
+          </Button>
+        </div>
 
-      <CustomTable
-        elements={transformedRoles}
-        name="roles"
-        columns={columns}
-        initialVisibleColumns={["roleId", "nameRole", "actions"]}
-        renderCell={renderCell}
-        filterProperty="nameRole"
-        Modal={Modal}
-      />
+        <CustomTable
+          elements={transformedRoles}
+          name="roles"
+          columns={columns}
+          initialVisibleColumns={["roleId", "nameRole", "users", "actions"]}
+          renderCell={renderCell}
+          filterProperty="nameRole"
+          Modal={Modal}
+          emptyContent="No hay roles disponibles"
+        />
+      </div>
     </DefaultLayout>
   );
 }

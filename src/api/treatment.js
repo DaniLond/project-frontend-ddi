@@ -1,20 +1,20 @@
-import axios from "axios";
+import instance from "./axiosInstance";
 
 // Obtener todos los tratamientos
-export const getAllTreatments = () => axios.get("/api/treatments");
+export const getAllTreatments = () => instance.get("/api/treatments");
 
 // Obtener un tratamiento por ID
 export const getTreatmentById = (treatmentId) =>
-  axios.get(`/api/treatments/${treatmentId}`);
+  instance.get(`/api/treatments/${treatmentId}`);
 
 // Crear un nuevo tratamiento
 export const createTreatment = (treatment) =>
-  axios.post("/api/treatments", treatment);
+  instance.post("/api/treatments", treatment);
 
 // Actualizar un tratamiento existente
 export const updateTreatment = (treatmentId, treatment) =>
-  axios.put(`/api/treatments/${treatmentId}`, treatment);
+  instance.put(`/api/treatments/${treatmentId}`, treatment);
 
 // Eliminar un tratamiento por ID
 export const deleteTreatment = (treatmentId) =>
-  axios.delete(`/api/treatments/${treatmentId}`);
+  instance.delete(`/api/treatments/${treatmentId}`);

@@ -2,9 +2,9 @@ import { createContext, useContext, useState } from "react";
 import {
   getAllRoles,
   createRole,
-  assignRoleToUser,
+  //assignRoleToUser,
   deleteRole,
-  updateRole, // Asegúrate de importar esta función de tu API
+  updateRole,
 } from "../api/role";
 
 export const RoleContext = createContext();
@@ -58,16 +58,16 @@ export const RoleProvider = ({ children }) => {
     }
   };
 
-  const assignRole = async (userId, roleId) => {
-    try {
-      setLoading(true);
-      await assignRoleToUser(userId, roleId);
-    } catch (err) {
-      setError(err.response?.data?.message || "Error al asignar rol");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const assignRole = async (userId, roleId) => {
+  //   try {
+  //     setLoading(true);
+  //     await assignRoleToUser(userId, roleId);
+  //   } catch (err) {
+  //     setError(err.response?.data?.message || "Error al asignar rol");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const removeRole = async (roleId) => {
     try {
@@ -90,7 +90,7 @@ export const RoleProvider = ({ children }) => {
         fetchAllRoles,
         createNewRole,
         updateRoleData,
-        assignRole,
+        //assignRole,
         removeRole,
       }}
     >

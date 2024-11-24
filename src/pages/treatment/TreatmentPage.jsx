@@ -7,28 +7,25 @@ import TreatmentModal from "./TreatmentModal";
 
 function TreatmentsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {
-    treatments,
-    loading,
-    error,
-    fetchTreatments,
-    addTreatment,
-    editTreatment,
-    removeTreatment,
-  } = useTreatments();
+  const [editingTreatment, setEditingTreatment] = useState(null);
+
+  const { treatments, loading, error, fetchTreatments, removeTreatment } =
+    useTreatments();
 
   const columns = [
     { name: "ID", uid: "idTrataments", sortable: true },
     { name: "Mascota", uid: "petId", sortable: true },
+    { name: "Cita", uid: "appoinmentId", sortable: true },
     { name: "Inicio", uid: "dateStart", sortable: true },
     { name: "Finalización", uid: "dateFinish", sortable: true },
+    { name: "Frecuencia", uid: "frequency", sortable: true },
+    { name: "Dosis", uid: "dosage", sortable: true },
     { name: "Descripción", uid: "descriptiont", sortable: false },
     { name: "Acciones", uid: "actions", sortable: false },
   ];
 
   useEffect(() => {
     fetchTreatments();
-    console.log("Tratamientos después de fetch:", treatments);
   }, []);
 
   const renderCell = (treatment, columnKey) => {
@@ -54,16 +51,18 @@ function TreatmentsPage() {
   };
 
   const handleCreate = () => {
+    setEditingTreatment(null);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setEditingTreatment(null);
   };
 
   const handleEdit = (treatment) => {
-    console.log("Editar tratamiento:", treatment);
-    // Aquí puedes abrir un modal o redirigir a una página de edición
+    setEditingTreatment(treatment);
+    setIsModalOpen(true);
   };
 
   const handleDelete = (id) => {
@@ -75,6 +74,12 @@ function TreatmentsPage() {
     }
   };
 
+  const transformedTreatments =
+    treatments?.map((treatment) => ({
+      ...treatment,
+      id: treatment.idTrataments,
+    })) || [];
+
   return (
     <DefaultLayout>
       <div className="p-2">
@@ -83,24 +88,32 @@ function TreatmentsPage() {
         </h2>
       </div>
       <CustomTable
-        elements={treatments}
+        elements={transformedTreatments}
         name="Tratamientos"
         columns={columns}
         initialVisibleColumns={[
           "idTrataments",
           "petId",
+          "appoinmentId",
           "dateStart",
+          "dateFinish",
+          "frequency",
+          "dosage",
           "actions",
         ]}
         handleCreate={handleCreate}
         renderCell={renderCell}
-        filterProperty="description"
+        filterProperty="descriptiont"
         additionalFilter={{
           label: "Filtrar por mascota",
           field: "petId",
         }}
       />
-      <TreatmentModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <TreatmentModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        editingTreatment={editingTreatment}
+      />
     </DefaultLayout>
   );
 }
