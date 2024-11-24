@@ -21,7 +21,7 @@ const TreatmentModal = ({ isOpen, onClose, editingTreatment = null }) => {
     frequency: "",
     dateStart: "",
     dateFinish: "",
-    appoinmentId: "",
+    appoinmentIdAppointment: "",
     petId: "",
   };
 
@@ -32,7 +32,7 @@ const TreatmentModal = ({ isOpen, onClose, editingTreatment = null }) => {
       // Asegurarse de que appointmentId no sea undefined o null
       const formattedTreatment = {
         ...editingTreatment,
-        appoinmentId: editingTreatment.appoinmentId || "",
+        appoinmentIdAppointment: editingTreatment.appoinmentIdAppointment || "",
       };
       setTreatment(formattedTreatment);
     } else {
@@ -58,7 +58,8 @@ const TreatmentModal = ({ isOpen, onClose, editingTreatment = null }) => {
       const treatmentData = {
         ...treatment,
         // Asegurarse de que appointmentId sea un string válido o null
-        appoinmentId: treatment.appoinmentId.trim() || null,
+        appoinmentIdAppointment:
+          treatment.appoinmentIdAppointment.trim() || null,
       };
 
       if (isEditing) {
@@ -144,8 +145,10 @@ const TreatmentModal = ({ isOpen, onClose, editingTreatment = null }) => {
                   key="input-appointment"
                   label="Id de la cita médica"
                   placeholder="Ingrese el ID de la cita médica"
-                  value={treatment.appoinmentId || ""}
-                  onChange={(e) => handleChange("appoinmentId", e.target.value)}
+                  value={treatment.appoinmentIdAppointment || ""}
+                  onChange={(e) =>
+                    handleChange("appoinmentIdAppointment", e.target.value)
+                  }
                 />
                 <Input
                   key="input-pet"

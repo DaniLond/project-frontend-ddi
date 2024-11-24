@@ -15,7 +15,7 @@ function TreatmentsPage() {
   const columns = [
     { name: "ID", uid: "idTrataments", sortable: true },
     { name: "Mascota", uid: "petId", sortable: true },
-    { name: "Cita", uid: "appoinmentId", sortable: true },
+    { name: "Cita", uid: "appoinmentIdAppointment", sortable: true },
     { name: "Inicio", uid: "dateStart", sortable: true },
     { name: "Finalización", uid: "dateFinish", sortable: true },
     { name: "Frecuencia", uid: "frequency", sortable: true },
@@ -94,7 +94,7 @@ function TreatmentsPage() {
         initialVisibleColumns={[
           "idTrataments",
           "petId",
-          "appoinmentId",
+          "appoinmentIdAppointment",
           "dateStart",
           "dateFinish",
           "frequency",
