@@ -1,151 +1,184 @@
-import React, { useEffect, useState } from "react";
-import DefaultLayout from "../../layouts/DefaultLayout";
-import { usePet } from "../../context/PetContext";
-import CustomTable from "../../components/CustomTable";
-import EditPetModal from "./EditPetModal";
-import DeletePetModal from "./DeletePetModal";
-import AddPetModal from "./AddPetModal";
+import React, { useState } from "react";
 import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
+  Input,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import Alert from "../../components/Alert"; // Updated import for custom Alert
+import { usePet } from "../../context/PetContext";
 
-function PetPages() {
-  const { pets, fetchAllPets } = usePet();
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedPet, setSelectedPet] = useState(null);
+function AddPetModal({ isOpen, onClose }) {
+  const { registerPet } = usePet();
+  const [alert, setAlert] = useState({
+    show: false,
+    type: false,
+    title: "",
+    message: "",
+  });
+  const [formData, setFormData] = useState({
+    id: null,
+    name: "",
+    species: "",
+    breed: "",
+    birhDate: "",
+    weight: "",
+    ownerId: "",
+  });
 
-  useEffect(() => {
-    fetchAllPets();
-  }, []);
-
-  const handleEdit = (pet) => {
-    setSelectedPet(pet);
-    setIsEditModalOpen(true);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleDelete = (pet) => {
-    setSelectedPet(pet);
-    setIsDeleteModalOpen(true);
+  const resetForm = () => {
+    setFormData({
+      id: null,
+      name: "",
+      species: "",
+      breed: "",
+      birtDate: "",
+      weight: "",
+      ownerId: "",
+    });
+    setAlert({ show: false, type: false, title: "", message: "" });
   };
 
-  const handleAdd = () => {
-    setIsAddModalOpen(true);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await registerPet({ ...formData, id: null });
+      setAlert({
+        show: true,
+        type: false, // false for success
+        title: "¡Éxito!",
+        message: "Mascota registrada exitosamente",
+      });
 
-  const handleCloseEditModal = () => {
-    setIsEditModalOpen(false);
-    setSelectedPet(null);
-    fetchAllPets();
-  };
-
-  const handleCloseDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setSelectedPet(null);
-    fetchAllPets();
-  };
-
-  const handleCloseAddModal = () => {
-    setIsAddModalOpen(false);
-    fetchAllPets();
-  };
-
-  const columns = [
-    { name: "ID", uid: "id", sortable: true },
-    { name: "NOMBRE", uid: "name", sortable: true },
-    { name: "ESPECIE", uid: "species", sortable: true },
-    { name: "RAZA", uid: "breed" },
-    { name: "FECHA DE NACIMIENTO", uid: "birthDate" },
-    { name: "PESO", uid: "weight" },
-    { name: "ESTADO", uid: "active" },
-    { name: "IDENTIFICACIÓN DEL DUEÑO", uid: "ownerId" },
-    { name: "ACCIONES", uid: "actions" },
-  ];
-
-  const initialVisibleColumns = [
-    "id",
-    "name",
-    "species",
-    "breed",
-    "birthDate",
-    "weight",
-    "ownerId",
-    "actions",
-  ];
-
-  const renderCell = (pet, columnKey) => {
-    switch (columnKey) {
-      case "actions":
-        return (
-          <div className="relative flex justify-center items-center">
-            <Dropdown className="bg-background border-1 border-primary">
-              <DropdownTrigger>
-                <Button isIconOnly radius="full" size="sm" variant="light">
-                  <FaEdit className="text-primary" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                color="primary"
-                variant="bordered"
-                disallowEmptySelection
-              >
-                <DropdownItem
-                  startContent={<FaEdit />}
-                  onClick={() => handleEdit(pet)}
-                >
-                  Editar
-                </DropdownItem>
-                <DropdownItem
-                  startContent={<FaTrash />}
-                  onClick={() => handleDelete(pet)}
-                  className="text-danger"
-                >
-                  Eliminar
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return pet[columnKey];
+      // Esperar 2 segundos antes de cerrar el modal y resetear el formulario
+      setTimeout(() => {
+        onClose();
+        resetForm();
+      }, 2000);
+    } catch (error) {
+      setAlert({
+        show: true,
+        type: true, // true for error
+        title: "Error",
+        message: error.message,
+      });
     }
   };
 
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
+  const handleAlertClose = () => {
+    setAlert({ show: false, type: false, title: "", message: "" });
+  };
+
   return (
-    <DefaultLayout>
-      <div className="p-2 flex justify-between items-center">
-        <h2 className="text-gray-800 text-2xl font-bold">Mascotas</h2>
-        <Button color="primary" startContent={<FaPlus />} onClick={handleAdd}>
-          Añadir Mascota
-        </Button>
-      </div>
-      <CustomTable
-        elements={pets}
-        name="Mascotas"
-        columns={columns}
-        initialVisibleColumns={initialVisibleColumns}
-        renderCell={renderCell}
-        filterProperty="name"
-      />
-      <EditPetModal
-        isOpen={isEditModalOpen}
-        onClose={handleCloseEditModal}
-        pet={selectedPet}
-      />
-      <DeletePetModal
-        isOpen={isDeleteModalOpen}
-        onClose={handleCloseDeleteModal}
-        pet={selectedPet}
-      />
-      <AddPetModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} />
-    </DefaultLayout>
+    <>
+      <Modal isOpen={isOpen} onClose={handleClose} size="2xl">
+        <ModalContent>
+          <form onSubmit={handleSubmit}>
+            <ModalHeader className="flex flex-col gap-1">
+              Añadir Nueva Mascota
+            </ModalHeader>
+            <ModalBody>
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Nombre"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+                <Select
+                  label="Especie"
+                  name="species"
+                  selectedKeys={formData.species ? [formData.species] : []}
+                  onChange={(e) =>
+                    handleInputChange({
+                      target: { name: "species", value: e.target.value },
+                    })
+                  }
+                  required
+                >
+                  <SelectItem key="dog" value="dog">
+                    Perro
+                  </SelectItem>
+                  <SelectItem key="cat" value="cat">
+                    Gato
+                  </SelectItem>
+                  <SelectItem key="other" value="other">
+                    Otro
+                  </SelectItem>
+                </Select>
+                <Input
+                  label="Raza"
+                  name="breed"
+                  value={formData.breed}
+                  onChange={handleInputChange}
+                  required
+                />
+                <Input
+                  label="Fecha de Nacimiento"
+                  name="birhDate"
+                  type="date"
+                  value={formData.birhDate}
+                  onChange={handleInputChange}
+                  required
+                />
+                <Input
+                  label="Peso (kg)"
+                  name="weight"
+                  type="number"
+                  value={formData.weight}
+                  onChange={handleInputChange}
+                  required
+                />
+                <Input
+                  label="ID del Dueño"
+                  name="ownerId"
+                  value={formData.ownerId}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" variant="light" onPress={handleClose}>
+                Cancelar
+              </Button>
+              <Button color="primary" type="submit">
+                Guardar
+              </Button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </Modal>
+
+      {alert.show && (
+        <Alert
+          type={alert.type}
+          title={alert.title}
+          message={alert.message}
+          onClose={handleAlertClose}
+        />
+      )}
+    </>
   );
 }
 
-export default PetPages;
+export default AddPetModal;
