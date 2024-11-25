@@ -1,6 +1,6 @@
-import axios from "./axios";
+import instance from "./axiosInstance";
 
-export const registerRequest = (user) => axios.post("/auth/register", user);
-export const loginRequest = (user) => axios.post("/auth/login", user);
-export const logoutRequest = () => axios.post("/auth/logout");
-export const verifyTokenRequest = () => axios.get("/auth/verify-token");
+export const registerRequest = (user) => instance.post("/auth/register", user);
+export const loginRequest = (user) => instance.post("/auth/login", user);
+export const logoutRequest = () => instance.post("/auth/logout");
+export const verifyTokenRequest = () => instance.get("/auth/verify-token");

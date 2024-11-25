@@ -221,7 +221,7 @@ function CustomTable({
                 label: "text-default-400",
               }}
               radius="sm"
-              selectedKeys={[rowsPerPage]}
+              selectedKeys={[`${rowsPerPage}`]}
               onChange={onRowsPerPageChange}
             >
               <SelectItem
@@ -323,7 +323,9 @@ function CustomTable({
         items={sortedItems}
       >
         {(item) => (
-          <TableRow key={item.id || item.name || item.idAppointment}>
+          <TableRow
+            key={item.id || item.name || item.idAppointment || item.cvId}
+          >
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey)}</TableCell>
             )}
