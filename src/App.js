@@ -77,7 +77,6 @@ function App() {
                             }
                           >
                             <Route path="/users" element={<User />} />
-                            <Route path="/pets" element={<PetPage />} />
                             <Route
                               path="/permissions"
                               element={<PermissionPage />}
@@ -98,6 +97,7 @@ function App() {
                               path="/api/treatments"
                               element={<Treatment />}
                             />
+                            <Route path="/pets" element={<PetPage />} />
                           </Route>
                         </Routes>
                       </MedicalHistoryProvider>

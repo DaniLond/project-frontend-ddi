@@ -98,13 +98,15 @@ function Navbar() {
             <CgCalendarDates className="w-[18px] h-[18px] mr-4" />
             Citas
           </Link>
-          <Link
-            to="/pets"
-            className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
-          >
-            <FaDog className="w-[18px] h-[18px] mr-4" />
-            Mascotas
-          </Link>
+          {hasRole(["ROLE_Admin", "ROLE_Veterinary"]) && (
+            <Link
+              to="/pets"
+              className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+            >
+              <FaDog className="w-[18px] h-[18px] mr-4" />
+              Mascotas
+            </Link>
+          )}
           <Link
             to="/medicalHistory"
             className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"

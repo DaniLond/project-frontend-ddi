@@ -61,7 +61,7 @@ function PetPages() {
     { name: "NOMBRE", uid: "name", sortable: true },
     { name: "ESPECIE", uid: "species", sortable: true },
     { name: "RAZA", uid: "breed" },
-    { name: "FECHA DE NACIMIENTO", uid: "birthDate" },
+    { name: "FECHA DE NACIMIENTO", uid: "birhDate" },
     { name: "PESO", uid: "weight" },
     { name: "ESTADO", uid: "active" },
     { name: "IDENTIFICACIÓN DEL DUEÑO", uid: "ownerId" },
