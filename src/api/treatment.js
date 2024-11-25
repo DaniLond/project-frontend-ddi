@@ -1,4 +1,4 @@
-import instance from "./axiosInstance";
+import instance from "./axios";
 
 // Obtener todos los tratamientos
 export const getAllTreatments = () => instance.get("/api/treatments");

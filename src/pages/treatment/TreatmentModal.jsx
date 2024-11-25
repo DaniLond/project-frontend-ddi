@@ -10,7 +10,12 @@ import {
 } from "@nextui-org/react";
 import { useTreatments } from "../../context/TreatmentContext";
 
-const TreatmentModal = ({ isOpen, onClose, editingTreatment = null }) => {
+const TreatmentModal = ({
+  isOpen,
+  onClose,
+  editingTreatment = null,
+  appointment = null,
+}) => {
   const { addTreatment, editTreatment } = useTreatments();
   const isEditing = Boolean(editingTreatment);
 
@@ -35,10 +40,17 @@ const TreatmentModal = ({ isOpen, onClose, editingTreatment = null }) => {
         appoinmentIdAppointment: editingTreatment.appoinmentIdAppointment || "",
       };
       setTreatment(formattedTreatment);
+    } else if (appointment) {
+      // Pre-rellenar los campos cuando se abre desde una cita
+      setTreatment((prev) => ({
+        ...prev,
+        appoinmentIdAppointment: appointment.idAppointment,
+        petId: appointment.pet.id,
+      }));
     } else {
       setTreatment(initialState);
     }
-  }, [editingTreatment, isOpen]);
+  }, [editingTreatment, appointment, isOpen]);
 
   const handleChange = (name, value) => {
     setTreatment((prev) => ({
@@ -149,6 +161,7 @@ const TreatmentModal = ({ isOpen, onClose, editingTreatment = null }) => {
                   onChange={(e) =>
                     handleChange("appoinmentIdAppointment", e.target.value)
                   }
+                  readOnly={Boolean(appointment)}
                 />
                 <Input
                   key="input-pet"
@@ -156,6 +169,7 @@ const TreatmentModal = ({ isOpen, onClose, editingTreatment = null }) => {
                   placeholder="Ingrese el ID de la mascota"
                   value={treatment.petId}
                   onChange={(e) => handleChange("petId", e.target.value)}
+                  readOnly={Boolean(appointment)}
                   required
                 />
               </div>

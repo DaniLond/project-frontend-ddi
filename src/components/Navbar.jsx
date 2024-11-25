@@ -6,7 +6,8 @@ import {
   DropdownMenu,
   User,
 } from "@nextui-org/react";
-import { FaHome, FaUsers } from "react-icons/fa";
+import { FaHome, FaUsers, FaDog, FaKey, FaFileMedical } from "react-icons/fa";
+import { CgCalendarDates } from "react-icons/cg";
 import { Link } from "react-router-dom";
 
 function Navbar() {
@@ -85,6 +86,34 @@ function Navbar() {
             >
               <FaUsers className="w-[18px] h-[18px] mr-4" />
               Gestión de Tratamientos
+          <Link
+            to="/appointment"
+            className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+          >
+            <CgCalendarDates className="w-[18px] h-[18px] mr-4" />
+            Citas
+          </Link>
+          <Link
+            to="/pets"
+            className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+          >
+            <FaDog className="w-[18px] h-[18px] mr-4" />
+            Mascotas
+          </Link>
+          <Link
+            to="/medicalHistory"
+            className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+          >
+            <FaFileMedical className="w-[18px] h-[18px] mr-4" />
+            Historial Médico
+          </Link>
+          {hasRole(["ROLE_Admin"]) && (
+            <Link
+              to="/permissions"
+              className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+            >
+              <FaKey className="w-[18px] h-[18px] mr-4" />
+              Permisos
             </Link>
           )}
         </nav>

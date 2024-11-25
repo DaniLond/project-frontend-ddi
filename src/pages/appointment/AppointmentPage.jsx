@@ -10,12 +10,15 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import { FaEdit } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdMedication } from "react-icons/md";
+import { IoEyeSharp } from "react-icons/io5";
 import { AppointmentModal } from "./AppointmentModal";
+import TreatmentModal from "../treatment/TreatmentModal";
 import { format } from "date-fns";
 import { useAuth } from "../../context/AuthContext";
 import { es } from "date-fns/locale";
 import Alert from "../../components/Alert";
+import ViewTreatmentsModal from "../treatment/ViewTreatmentsModal";
 
 function AppointmentPage() {
   const {
@@ -28,6 +31,10 @@ function AppointmentPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [appointmentToEdit, setAppointmentToEdit] = useState(null);
   const [visibleErrors, setVisibleErrors] = useState([]);
+  const [isTreatmentModalOpen, setIsTreatmentModalOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [isViewTreatmentsModalOpen, setIsViewTreatmentsModalOpen] =
+    useState(false);
 
   useEffect(() => {
     fetchAppointments();
@@ -82,10 +89,6 @@ function AppointmentPage() {
     { name: "ACCIONES", uid: "actions" },
   ];
 
-  const visibleColumns = user.roles.includes("ROLE_Owner")
-    ? columns.filter((col) => col.uid !== "actions")
-    : columns;
-
   const initialVisibleColumns = [
     "dateDates",
     "hourapp",
@@ -95,22 +98,44 @@ function AppointmentPage() {
     "actions",
   ];
 
+  const handleAddTreatment = (appointment) => {
+    setSelectedAppointment(appointment);
+    setIsTreatmentModalOpen(true);
+  };
+
+  const handleCloseTreatmentModal = () => {
+    setIsTreatmentModalOpen(false);
+    setSelectedAppointment(null);
+  };
+
+  const handleViewTreatments = (appointment) => {
+    setSelectedAppointment(appointment);
+    setIsViewTreatmentsModalOpen(true);
+  };
+
+  const handleCloseViewTreatments = () => {
+    setIsViewTreatmentsModalOpen(false);
+    setSelectedAppointment(null);
+  };
+
   const renderCell = (appointment, columnKey) => {
     switch (columnKey) {
       case "dateDates":
         return format(
           new Date(appointment.dateDates + "T00:00:00"),
           "dd 'de' MMMM, yyyy",
-          {
-            locale: es,
-          },
+          { locale: es },
         );
+
       case "hourapp":
         return format(new Date(`2000-01-01T${appointment.hourapp}`), "hh:mm a");
+
       case "pet":
         return appointment.pet.name;
+
       case "user":
         return appointment.user.name;
+
       case "statesTypeStates":
         return (
           <span
@@ -127,10 +152,12 @@ function AppointmentPage() {
             {appointment.statesTypeStates}
           </span>
         );
+
       case "actions":
         return (
-          <div className="relative flex justify-center items-center gap -2">
-            {canEditAppointment(appointment) && (
+          <div className="relative flex justify-center items-center gap-2">
+            {canEditAppointment(appointment) ? (
+              // Menú desplegable para usuarios con permisos de edición
               <Dropdown className="bg-background border-1 border-primary">
                 <DropdownTrigger>
                   <Button isIconOnly radius="full" size="sm" variant="light">
@@ -149,6 +176,18 @@ function AppointmentPage() {
                     Editar
                   </DropdownItem>
                   <DropdownItem
+                    startContent={<MdMedication />}
+                    onClick={() => handleAddTreatment(appointment)}
+                  >
+                    Agregar Tratamiento
+                  </DropdownItem>
+                  <DropdownItem
+                    startContent={<IoEyeSharp />}
+                    onClick={() => handleViewTreatments(appointment)}
+                  >
+                    Ver Tratamientos
+                  </DropdownItem>
+                  <DropdownItem
                     startContent={<MdDelete />}
                     className="text-danger"
                     color="danger"
@@ -158,13 +197,26 @@ function AppointmentPage() {
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
+            ) : (
+              // Botón solo para Owner
+              <Button
+                isIconOnly
+                radius="full"
+                size="sm"
+                variant="light"
+                onClick={() => handleViewTreatments(appointment)}
+              >
+                <IoEyeSharp className="text-primary" />
+              </Button>
             )}
           </div>
         );
+
       case "observations":
         return (
           <div className="max-w-xs truncate">{appointment[columnKey]}</div>
         );
+
       default:
         return appointment[columnKey];
     }
@@ -188,7 +240,7 @@ function AppointmentPage() {
         <CustomTable
           elements={appointments}
           name="Citas"
-          columns={visibleColumns}
+          columns={columns}
           initialVisibleColumns={initialVisibleColumns}
           handleCreate={
             user.roles.includes("ROLE_Owner") ? null : handleCreateNew
@@ -201,6 +253,16 @@ function AppointmentPage() {
           isOpen={isEditModalOpen}
           onClose={handleCloseModal}
           appointmentToEdit={appointmentToEdit}
+        />
+        <TreatmentModal
+          isOpen={isTreatmentModalOpen}
+          onClose={handleCloseTreatmentModal}
+          appointment={selectedAppointment}
+        />
+        <ViewTreatmentsModal
+          isOpen={isViewTreatmentsModalOpen}
+          onClose={handleCloseViewTreatments}
+          appointment={selectedAppointment}
         />
       </div>
     </DefaultLayout>

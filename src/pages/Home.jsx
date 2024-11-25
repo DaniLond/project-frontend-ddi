@@ -34,14 +34,14 @@ function HomePage() {
           <div className="space-x-4">
             <Button
               as={Link}
-              to="/"
+              to="/appointment"
               className="w-full bg-primary-dark text-white hover:bg-primary font-semibold"
               variant="shadow"
               size="lg"
               radius="full"
               startContent={<MdLocalHospital className="text-xl" />}
             >
-              Agendar Cita
+              Ver Citas
             </Button>
           </div>
         </div>
