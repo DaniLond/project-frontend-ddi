@@ -26,7 +26,7 @@ import { MedicalHistoryProvider } from "./context/MedicalHistoryContext";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/chessFront">
       <AuthProvider>
         <UserProvider>
           <RoleProvider>

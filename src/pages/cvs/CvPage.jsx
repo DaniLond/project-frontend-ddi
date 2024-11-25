@@ -3,7 +3,6 @@ import CustomTable from "../../components/CustomTable";
 import { Button } from "@nextui-org/react";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import { useCv } from "../../context/CvContext";
-import { FaEdit, FaTrash, FaUsers } from "react-icons/fa";
 import CVModal from "./CVModal";
 
 function CvPage() {
@@ -30,31 +29,22 @@ function CvPage() {
 
   useEffect(() => {
     fetchCVs();
-  }, [refreshTrigger]); // Solo se ejecuta cuando refreshTrigger cambia
+  }, [refreshTrigger]);
 
   const renderCell = (cv, columnKey) => {
     switch (columnKey) {
       case "actions":
         return (
-          <div className="flex justify-center gap-2">
-            <Button
-              isIconOnly
-              radius="full"
-              size="sm"
-              variant="light"
-              onPress={() => handleEdit(cv)}
-            >
-              <FaEdit className="text-primary" />
+          <div className="flex gap-2">
+            <Button size="sm" onPress={() => handleEdit(cv)}>
+              Editar
             </Button>
             <Button
-              isIconOnly
-              radius="full"
               size="sm"
-              variant="light"
               color="danger"
               onPress={() => handleDelete(cv.cvId)}
             >
-              <FaTrash className="text-danger" />
+              Eliminar
             </Button>
           </div>
         );
@@ -62,6 +52,20 @@ function CvPage() {
         return cv[columnKey] || "N/A";
     }
   };
+
+  // Transformación de datos para manejar la estructura de respuesta
+  const transformedCVs = Array.isArray(cvs)
+    ? cvs.map((cvResponse) => {
+        // Extraer los datos del CV desde la estructura de respuesta
+        const cvData = cvResponse.data || cvResponse;
+
+        return {
+          ...cvData,
+          id: cvData.cvId,
+          key: cvData.cvId,
+        };
+      })
+    : [];
 
   const handleCreate = () => {
     setEditingCV(null);
@@ -71,7 +75,6 @@ function CvPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingCV(null);
-    // Refrescar los datos solo cuando se cierra el modal después de una operación exitosa
     setRefreshTrigger((prev) => prev + 1);
   };
 
@@ -89,14 +92,6 @@ function CvPage() {
       setRefreshTrigger((prev) => prev + 1);
     }
   };
-
-  // Asegurarse de que cvs es un array antes de mapearlo
-  const transformedCVs = Array.isArray(cvs)
-    ? cvs.map((cv) => ({
-        ...cv,
-        id: cv.cvId,
-      }))
-    : [];
 
   if (loading) {
     return (
