@@ -3,6 +3,7 @@ import CustomTable from "../../components/CustomTable";
 import { Button } from "@nextui-org/react";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import { useCv } from "../../context/CvContext";
+import { FaEdit, FaTrash, FaUsers } from "react-icons/fa";
 import CVModal from "./CVModal";
 
 function CvPage() {
@@ -35,16 +36,25 @@ function CvPage() {
     switch (columnKey) {
       case "actions":
         return (
-          <div className="flex gap-2">
-            <Button size="sm" onPress={() => handleEdit(cv)}>
-              Editar
+          <div className="flex justify-center gap-2">
+            <Button
+              isIconOnly
+              radius="full"
+              size="sm"
+              variant="light"
+              onPress={() => handleEdit(cv)}
+            >
+              <FaEdit className="text-primary" />
             </Button>
             <Button
+              isIconOnly
+              radius="full"
               size="sm"
+              variant="light"
               color="danger"
               onPress={() => handleDelete(cv.cvId)}
             >
-              Eliminar
+              <FaTrash className="text-danger" />
             </Button>
           </div>
         );

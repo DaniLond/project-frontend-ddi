@@ -7,6 +7,9 @@ import {
   User,
 } from "@nextui-org/react";
 import { FaHome, FaUsers, FaDog, FaKey, FaFileMedical } from "react-icons/fa";
+import { RiArticleFill } from "react-icons/ri";
+import { VscAccount } from "react-icons/vsc";
+import { CiMedicalClipboard } from "react-icons/ci";
 import { CgCalendarDates } from "react-icons/cg";
 import { Link } from "react-router-dom";
 
@@ -66,7 +69,7 @@ function Navbar() {
               to="/api/roles"
               className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
             >
-              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              <VscAccount className="w-[18px] h-[18px] mr-4" />
               Roles
             </Link>
           )}
@@ -75,7 +78,7 @@ function Navbar() {
               to="/api/cvs"
               className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
             >
-              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              <RiArticleFill className="w-[18px] h-[18px] mr-4" />
               Gestión de Curriculum
             </Link>
           )}
@@ -84,8 +87,10 @@ function Navbar() {
               to="/api/treatments"
               className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
             >
-              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              <CiMedicalClipboard className="w-[18px] h-[18px] mr-4" />
               Gestión de Tratamientos
+            </Link>
+          )}
           <Link
             to="/appointment"
             className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"

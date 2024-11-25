@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CustomTable from "../../components/CustomTable";
 import { Button } from "@nextui-org/react";
 import DefaultLayout from "../../layouts/DefaultLayout";
+import { FaEdit, FaTrash, FaUsers } from "react-icons/fa";
 import { useTreatments } from "../../context/TreatmentContext";
 import TreatmentModal from "./TreatmentModal";
 
@@ -33,15 +34,24 @@ function TreatmentsPage() {
       case "actions":
         return (
           <div className="flex justify-center gap-2">
-            <Button size="sm" onClick={() => handleEdit(treatment)}>
-              Editar
+            <Button
+              isIconOnly
+              radius="full"
+              size="sm"
+              variant="light"
+              onClick={() => handleEdit(treatment)}
+            >
+              <FaEdit className="text-primary" />
             </Button>
             <Button
+              isIconOnly
+              radius="full"
               size="sm"
-              color="error"
+              variant="light"
+              color="danger"
               onClick={() => handleDelete(treatment.idTrataments)}
             >
-              Eliminar
+              <FaTrash className="text-danger" />
             </Button>
           </div>
         );
@@ -50,10 +60,10 @@ function TreatmentsPage() {
     }
   };
 
-  const handleCreate = () => {
-    setEditingTreatment(null);
-    setIsModalOpen(true);
-  };
+  // const handleCreate = () => {
+  //   setEditingTreatment(null);
+  //   setIsModalOpen(true);
+  // };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -101,7 +111,7 @@ function TreatmentsPage() {
           "dosage",
           "actions",
         ]}
-        handleCreate={handleCreate}
+        //handleCreate={handleCreate}
         renderCell={renderCell}
         filterProperty="descriptiont"
         additionalFilter={{

@@ -42,18 +42,15 @@ function RolePage() {
     setIsModalOpen(true);
   };
 
-  // Transformar los roles para incluir id y formatear la información de usuarios
   const transformedRoles =
     roles?.map((role) => ({
       ...role,
       id: role.roleId,
-      usersCount: role.roleUsers?.length || 0,
     })) || [];
 
   const columns = [
     { name: "ID", uid: "roleId", sortable: true },
     { name: "NOMBRE", uid: "nameRole", sortable: true },
-    { name: "USUARIOS", uid: "users", sortable: true },
     { name: "ACCIONES", uid: "actions" },
   ];
 
@@ -63,21 +60,10 @@ function RolePage() {
         return <span className="text-xs">{role.roleId}</span>;
       case "nameRole":
         return <span className="font-medium">{role.nameRole}</span>;
-      case "users":
-        return (
-          <Chip
-            size="sm"
-            variant="flat"
-            color={role.usersCount > 0 ? "primary" : "default"}
-            startContent={<FaUsers className="text-xs" />}
-          >
-            {role.usersCount} usuario{role.usersCount !== 1 ? "s" : ""}
-          </Chip>
-        );
       case "actions":
         return (
           <div className="flex justify-center gap-2">
-            <Button
+            {/* <Button
               isIconOnly
               radius="full"
               size="sm"
@@ -85,7 +71,7 @@ function RolePage() {
               onPress={() => handleEdit(role)}
             >
               <FaEdit className="text-primary" />
-            </Button>
+            </Button> */}
             <Button
               isIconOnly
               radius="full"
@@ -126,7 +112,7 @@ function RolePage() {
           elements={transformedRoles}
           name="roles"
           columns={columns}
-          initialVisibleColumns={["roleId", "nameRole", "users", "actions"]}
+          initialVisibleColumns={["roleId", "nameRole", "actions"]}
           renderCell={renderCell}
           filterProperty="nameRole"
           Modal={Modal}
