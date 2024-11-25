@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { getAllCvs, getCvById, createCv, deleteCv } from "../api/cv";
+import { getAllCvs, getCvById, createCv, updateCv, deleteCv } from "../api/cv";
 
 // Crear el contexto
 const CvContext = createContext();
@@ -14,12 +14,12 @@ export const CvProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   // Función para obtener todos los CVs
-  const fetchAllCvs = async () => {
+  const fetchCVs = async () => {
     setLoading(true);
     setError(null);
     try {
       const { data } = await getAllCvs();
-      setCvs(data); // Actualizar el estado con los CVs obtenidos
+      setCvs(data);
       return data;
     } catch (err) {
       console.error("Error al obtener los CVs:", err);
@@ -43,41 +43,55 @@ export const CvProvider = ({ children }) => {
   };
 
   // Función para crear un nuevo CV
-  const addCv = async (cv) => {
+  const addCV = async (cv) => {
     try {
       const { data } = await createCv(cv);
-      // Opcionalmente, puedes actualizar el estado local
       setCvs((prevCvs) => [...prevCvs, data]);
       return data;
     } catch (err) {
       console.error("Error al crear el CV:", err);
       setError(err.message);
-      throw err; // Lanzar el error para manejarlo fuera del contexto si es necesario
+      throw err;
+    }
+  };
+
+  // Función para editar un CV
+  const editCV = async (cvId, cvData) => {
+    try {
+      const { data } = await updateCv(cvId, cvData);
+      setCvs((prevCvs) =>
+        prevCvs.map((cv) => (cv.cvId === cvId ? { ...cv, ...data } : cv)),
+      );
+      return data;
+    } catch (err) {
+      console.error("Error al actualizar el CV:", err);
+      setError(err.message);
+      throw err;
     }
   };
 
   // Función para eliminar un CV por ID
-  const removeCv = async (cvId) => {
+  const removeCV = async (cvId) => {
     try {
       await deleteCv(cvId);
-      // Opcionalmente, puedes actualizar el estado local
       setCvs((prevCvs) => prevCvs.filter((cv) => cv.cvId !== cvId));
     } catch (err) {
       console.error(`Error al eliminar el CV con ID ${cvId}:`, err);
       setError(err.message);
-      throw err; // Lanzar el error para manejarlo fuera del contexto
+      throw err;
     }
   };
 
   // Valor proporcionado por el contexto
   const value = {
-    cvs, // Lista de CVs
-    loading, // Estado de carga
-    error, // Error en la operación
-    fetchAllCvs, // Función para obtener todos los CVs
-    fetchCvById, // Función para obtener un CV por ID
-    addCv, // Función para crear un nuevo CV
-    removeCv, // Función para eliminar un CV
+    cvs,
+    loading,
+    error,
+    fetchCVs,
+    fetchCvById,
+    addCV,
+    editCV,
+    removeCV,
   };
 
   return <CvContext.Provider value={value}>{children}</CvContext.Provider>;

@@ -47,7 +47,7 @@ function RolePage() {
     roles?.map((role) => ({
       ...role,
       id: role.roleId,
-      usersCount: role.users?.length || 0,
+      usersCount: role.roleUsers?.length || 0,
     })) || [];
 
   const columns = [

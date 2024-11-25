@@ -5,7 +5,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import Home from "./pages/Home";
 import User from "./pages/user/UserPage";
 import Role from "./pages/role/RolesPage";
-import AdminCv from "./pages/cv/AdminCvPage";
+import AdminCv from "./pages/cvs/CvPage";
 import Treatmet from "./pages/treatment/TreatmentPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import { UserProvider } from "./context/UserContext";
