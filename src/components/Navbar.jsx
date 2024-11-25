@@ -6,7 +6,11 @@ import {
   DropdownMenu,
   User,
 } from "@nextui-org/react";
-import { FaHome, FaUsers } from "react-icons/fa";
+import { FaHome, FaUsers, FaDog, FaKey, FaFileMedical } from "react-icons/fa";
+import { RiArticleFill } from "react-icons/ri";
+import { VscAccount } from "react-icons/vsc";
+import { CiMedicalClipboard } from "react-icons/ci";
+import { CgCalendarDates } from "react-icons/cg";
 import { Link } from "react-router-dom";
 
 function Navbar() {
@@ -65,7 +69,7 @@ function Navbar() {
               to="/api/roles"
               className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
             >
-              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              <VscAccount className="w-[18px] h-[18px] mr-4" />
               Roles
             </Link>
           )}
@@ -74,26 +78,47 @@ function Navbar() {
               to="/api/cvs"
               className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
             >
-              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              <RiArticleFill className="w-[18px] h-[18px] mr-4" />
               Gestión de Curriculum
             </Link>
           )}
-          {hasRole(["ROLE_Admin"]) && (
+          {hasRole(["ROLE_Admin", "ROLE_Veterinary"]) && (
             <Link
               to="/api/treatments"
               className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
             >
-              <FaUsers className="w-[18px] h-[18px] mr-4" />
+              <CiMedicalClipboard className="w-[18px] h-[18px] mr-4" />
               Gestión de Tratamientos
             </Link>
           )}
-          {hasRole(["ROLE_Veterinary"]) && (
+          <Link
+            to="/appointment"
+            className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+          >
+            <CgCalendarDates className="w-[18px] h-[18px] mr-4" />
+            Citas
+          </Link>
+          <Link
+            to="/pets"
+            className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+          >
+            <FaDog className="w-[18px] h-[18px] mr-4" />
+            Mascotas
+          </Link>
+          <Link
+            to="/medicalHistory"
+            className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
+          >
+            <FaFileMedical className="w-[18px] h-[18px] mr-4" />
+            Historial Médico
+          </Link>
+          {hasRole(["ROLE_Admin"]) && (
             <Link
-              to="/api/treatments"
+              to="/permissions"
               className="text-black hover:text-primary-dark text-sm flex items-center hover:bg-primary-light rounded px-4 py-3 transition-all"
             >
-              <FaUsers className="w-[18px] h-[18px] mr-4" />
-              Gestión de Tratamientos
+              <FaKey className="w-[18px] h-[18px] mr-4" />
+              Permisos
             </Link>
           )}
         </nav>
