@@ -12,7 +12,6 @@ import PermissionPage from "./pages/per/PermissionPage";
 import Appointment from "./pages/appointment/AppointmentPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
-import MedicalHistory from "./pages/medicalHistory/MedicalHistoryPage";
 
 // Importaciones de Providers
 import { UserProvider } from "./context/UserContext";
@@ -23,6 +22,7 @@ import { PetProvider } from "./context/PetContext";
 import { PermissionProvider } from "./context/PermissionContext";
 import { AppointmentProvider } from "./context/AppointmentContext";
 import { MedicalHistoryProvider } from "./context/MedicalHistoryContext";
+import MedicalHistory from "./pages/medicalHistory/MedicalHistoryPage";
 
 function App() {
   return (
@@ -45,6 +45,18 @@ function App() {
                             element={<UnauthorizedPage />}
                           />
 
+                          {/* Rutas protegidas para todos los usuarios autenticados */}
+                          <Route element={<ProtectedRoute />}>
+                            <Route path="/home" element={<Home />} />
+                            <Route
+                              path="/appointment"
+                              element={<Appointment />}
+                            />
+                            <Route
+                              path="/medicalHistory"
+                              element={<MedicalHistory />}
+                            />
+                          </Route>
                           {/* Rutas protegidas para todos los usuarios autenticados */}
                           <Route element={<ProtectedRoute />}>
                             <Route path="/home" element={<Home />} />
