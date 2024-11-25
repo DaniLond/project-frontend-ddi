@@ -14,6 +14,8 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import { PetProvider } from "./context/PetContext";
 import { PermissionProvider } from "./context/PermissionContext";
 import { TreatmentProvider } from "./context/TreatmentContext";
+import MedicalHistory from "./pages/medicalHistory/MedicalHistoryPage";
+import { MedicalHistoryProvider } from "./context/MedicalHistoryContext";
 
 function App() {
   return (
@@ -23,39 +25,54 @@ function App() {
           <PetProvider>
             <PermissionProvider>
               <TreatmentProvider>
-                <BrowserRouter>
-                  <Routes>
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route
-                      path="/unauthorized"
-                      element={<UnauthorizedPage />}
-                    />
+                <MedicalHistoryProvider>
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                      <Route
+                        path="/unauthorized"
+                        element={<UnauthorizedPage />}
+                      />
 
-                    {/* Rutas protegidas para todos los usuarios autenticados */}
-                    <Route element={<ProtectedRoute />}>
-                      <Route path="/home" element={<Home />} />
-                      <Route path="/appointment" element={<Appointment />} />
-                    </Route>
+                      {/* Rutas protegidas para todos los usuarios autenticados */}
+                      <Route element={<ProtectedRoute />}>
+                        <Route path="/home" element={<Home />} />
+                        <Route path="/appointment" element={<Appointment />} />
+                        <Route
+                          path="/medicalHistory"
+                          element={<MedicalHistory />}
+                        />
+                      </Route>
 
-                    {/* Rutas protegidas solo para administradores */}
-                    <Route
-                      element={<ProtectedRoute allowedRoles={["ROLE_Admin"]} />}
-                    >
-                      <Route path="/users" element={<User />} />
-                    </Route>
-                    <Route
-                      element={<ProtectedRoute allowedRoles={["ROLE_Admin"]} />}
-                    >
-                      <Route path="/pets" element={<PetPage />} />
-                    </Route>
-                    <Route
-                      element={<ProtectedRoute allowedRoles={["ROLE_Admin"]} />}
-                    >
-                      <Route path="/permissions" element={<PermissionPage />} />
-                    </Route>
-                  </Routes>
-                </BrowserRouter>
+                      {/* Rutas protegidas solo para administradores */}
+                      <Route
+                        element={
+                          <ProtectedRoute allowedRoles={["ROLE_Admin"]} />
+                        }
+                      >
+                        <Route path="/users" element={<User />} />
+                      </Route>
+                      <Route
+                        element={
+                          <ProtectedRoute allowedRoles={["ROLE_Admin"]} />
+                        }
+                      >
+                        <Route path="/pets" element={<PetPage />} />
+                      </Route>
+                      <Route
+                        element={
+                          <ProtectedRoute allowedRoles={["ROLE_Admin"]} />
+                        }
+                      >
+                        <Route
+                          path="/permissions"
+                          element={<PermissionPage />}
+                        />
+                      </Route>
+                    </Routes>
+                  </BrowserRouter>
+                </MedicalHistoryProvider>
               </TreatmentProvider>
             </PermissionProvider>
           </PetProvider>
