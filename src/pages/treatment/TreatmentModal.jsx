@@ -7,6 +7,7 @@ import {
   ModalFooter,
   Button,
   Input,
+  Spacer,
 } from "@nextui-org/react";
 import { useTreatments } from "../../context/TreatmentContext";
 
@@ -20,31 +21,39 @@ const TreatmentModal = ({
   const isEditing = Boolean(editingTreatment);
 
   const initialState = {
-    idTrataments: "",
+    id: "",
     descriptiont: "",
     dosage: "",
     frequency: "",
     dateStart: "",
     dateFinish: "",
-    appoinmentIdAppointment: "",
+    appointmentId: "",
     petId: "",
+    typeTreatment: "",
+    specifications: [{ key: "", value: "" }],
+    notes: "",
   };
 
   const [treatment, setTreatment] = useState(initialState);
 
   useEffect(() => {
     if (editingTreatment) {
-      // Asegurarse de que appointmentId no sea null
       const formattedTreatment = {
         ...editingTreatment,
-        appoinmentIdAppointment: editingTreatment.appoinmentIdAppointment || "",
+        appointmentId: editingTreatment.appointmentId || "",
+        typeTreatment: editingTreatment.typeTreatment || "",
+        specifications: editingTreatment.specifications
+          ? Object.entries(editingTreatment.specifications).map(
+              ([key, value]) => ({ key, value }),
+            )
+          : [{ key: "", value: "" }],
+        notes: editingTreatment.notes || "",
       };
       setTreatment(formattedTreatment);
     } else if (appointment) {
-      // Pre-rellenar los campos desde una cita
       setTreatment((prev) => ({
         ...prev,
-        appoinmentIdAppointment: appointment.idAppointment,
+        appointmentId: appointment.idAppointment,
         petId: appointment.pet.id,
       }));
     } else {
@@ -52,11 +61,37 @@ const TreatmentModal = ({
     }
   }, [editingTreatment, appointment, isOpen]);
 
-  const handleChange = (name, value) => {
-    setTreatment((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleChange = (name, value, index = null) => {
+    // Modificación clave: manejo más preciso de las especificaciones
+    if (name.startsWith("specifications")) {
+      setTreatment((prev) => {
+        // Crear una copia profunda de las especificaciones
+        const updatedSpecs = [...prev.specifications];
+
+        // Si es para agregar una nueva especificación
+        if (index === null) {
+          updatedSpecs.push({ key: "", value: "" });
+        }
+        // Si es para modificar una especificación existente
+        else {
+          // Determinar si se está modificando la clave o el valor
+          const field = name.includes("key") ? "key" : "value";
+          updatedSpecs[index][field] = value;
+        }
+
+        return {
+          ...prev,
+          specifications: updatedSpecs,
+        };
+      });
+    }
+    // Manejo de campos normales
+    else {
+      setTreatment((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const generateTreatmentId = () => {
@@ -69,17 +104,21 @@ const TreatmentModal = ({
     try {
       const treatmentData = {
         ...treatment,
-        // AppointmentId sea un string válido o null
-        appoinmentIdAppointment:
-          treatment.appoinmentIdAppointment.trim() || null,
+        appointmentId: treatment.appointmentId.trim() || null,
+        specifications: treatment.specifications.reduce((acc, spec) => {
+          if (spec.key.trim()) {
+            acc[spec.key] = spec.value;
+          }
+          return acc;
+        }, {}),
       };
 
       if (isEditing) {
-        await editTreatment(treatment.idTrataments, treatmentData);
+        await editTreatment(treatment.id, treatmentData);
       } else {
         const newTreatment = {
           ...treatmentData,
-          idTrataments: generateTreatmentId(),
+          id: generateTreatmentId(),
         };
         await addTreatment(newTreatment);
       }
@@ -99,9 +138,7 @@ const TreatmentModal = ({
     onClose();
   };
 
-  const modalKey = isEditing
-    ? `edit-${treatment.idTrataments}`
-    : "create-treatment";
+  const modalKey = isEditing ? `edit-${treatment.id}` : "create-treatment";
 
   return (
     <Modal key={modalKey} isOpen={isOpen} onClose={handleClose} size="2xl">
@@ -156,9 +193,9 @@ const TreatmentModal = ({
                   key="input-appointment"
                   label="Id de la cita médica"
                   placeholder="Ingrese el ID de la cita médica"
-                  value={treatment.appoinmentIdAppointment || ""}
+                  value={treatment.appointmentId || ""}
                   onChange={(e) =>
-                    handleChange("appoinmentIdAppointment", e.target.value)
+                    handleChange("appointmentId", e.target.value)
                   }
                   readOnly={Boolean(appointment)}
                 />
@@ -171,6 +208,66 @@ const TreatmentModal = ({
                   readOnly={Boolean(appointment)}
                   required
                 />
+                <Input
+                  key="input-type"
+                  label="Tipo de Tratamiento"
+                  placeholder="Ingrese el tipo de tratamiento"
+                  value={treatment.typeTreatment}
+                  onChange={(e) =>
+                    handleChange("typeTreatment", e.target.value)
+                  }
+                  required
+                />
+                <Input
+                  key="input-notes"
+                  label="Notas"
+                  placeholder="Ingrese las notas"
+                  value={treatment.notes}
+                  onChange={(e) => handleChange("notes", e.target.value)}
+                />
+
+                <Spacer y={2} />
+                <h3 className="text-lg font-semibold">Especificaciones</h3>
+                <div className="flex flex-wrap gap-4">
+                  {treatment.specifications.map((spec, index) => (
+                    <div
+                      key={`spec-${index}`}
+                      className="w-full md:w-[calc(50%-1rem)] flex gap-2"
+                    >
+                      <Input
+                        label={`Clave ${index + 1}`}
+                        placeholder="Clave"
+                        value={spec.key}
+                        onChange={(e) =>
+                          handleChange(
+                            `specifications[${index}].key`,
+                            e.target.value,
+                            index,
+                          )
+                        }
+                      />
+                      <Input
+                        label={`Valor ${index + 1}`}
+                        placeholder="Valor"
+                        value={spec.value}
+                        onChange={(e) =>
+                          handleChange(
+                            `specifications[${index}].value`,
+                            e.target.value,
+                            index,
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  size="sm"
+                  color="primary"
+                  onClick={() => handleChange("specifications", null)}
+                >
+                  Agregar Especificación
+                </Button>
               </div>
             </ModalBody>
             <ModalFooter>

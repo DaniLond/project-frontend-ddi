@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CustomTable from "../../components/CustomTable";
-import { Button } from "@nextui-org/react";
+import { Button, Tooltip } from "@nextui-org/react";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useTreatments } from "../../context/TreatmentContext";
@@ -15,14 +15,17 @@ function TreatmentsPage() {
     useTreatments();
 
   const columns = [
-    { name: "ID", uid: "idTrataments", sortable: true },
+    { name: "ID", uid: "id", sortable: true },
     { name: "Mascota", uid: "petId", sortable: true },
-    { name: "Cita", uid: "appoinmentIdAppointment", sortable: true },
+    { name: "Cita", uid: "appointmentId", sortable: true },
+    { name: "Tipo de Tratamiento", uid: "typeTreatment", sortable: true },
     { name: "Inicio", uid: "dateStart", sortable: true },
     { name: "Finalización", uid: "dateFinish", sortable: true },
     { name: "Frecuencia", uid: "frequency", sortable: true },
     { name: "Dosis", uid: "dosage", sortable: true },
-    { name: "Descripción", uid: "descriptiont", sortable: false },
+    { name: "Descripción", uid: "descriptiont", sortable: true },
+    { name: "Notas", uid: "notes", sortable: false },
+    { name: "Especificaciones", uid: "specifications", sortable: false },
     { name: "Acciones", uid: "actions", sortable: false },
   ];
 
@@ -31,6 +34,22 @@ function TreatmentsPage() {
   }, [refreshTrigger]);
 
   const renderCell = (treatment, columnKey) => {
+    const getValue = (value) => {
+      if (value === null || value === undefined || value === "") {
+        return "N/A";
+      }
+      if (
+        value instanceof Date ||
+        (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value))
+      ) {
+        return new Date(value).toLocaleDateString() || "N/A";
+      }
+      if (typeof value === "object") {
+        return JSON.stringify(value) || "N/A";
+      }
+      return String(value);
+    };
+
     switch (columnKey) {
       case "actions":
         return (
@@ -50,14 +69,51 @@ function TreatmentsPage() {
               size="sm"
               variant="light"
               color="danger"
-              onClick={() => handleDelete(treatment.idTrataments)}
+              onClick={() => handleDelete(treatment.id)}
             >
               <FaTrash className="text-danger" />
             </Button>
           </div>
         );
+      case "specifications":
+        return (
+          <Tooltip
+            content={
+              treatment.specifications
+                ? Object.entries(treatment.specifications).map(
+                    ([key, value]) => (
+                      <div key={key} className="flex items-start">
+                        <span className="font-medium mr-2">• </span>
+                        <span className="font-medium">{key}:</span>{" "}
+                        {getValue(value)}
+                      </div>
+                    ),
+                  )
+                : "N/A"
+            }
+            placement="top"
+          >
+            <div className="truncate max-w-[200px]">
+              {Object.entries(treatment.specifications || {})
+                .slice(0, 2)
+                .map(([key, value]) => (
+                  <div key={key} className="flex items-start">
+                    <span className="font-medium mr-2">• </span>
+                    <span className="font-medium">{key}:</span>{" "}
+                    {getValue(value)}
+                  </div>
+                ))}
+              {Object.entries(treatment.specifications || {}).length > 2 && (
+                <div className="flex items-start">
+                  <span className="font-medium mr-2">• </span>
+                  <span>...</span>
+                </div>
+              )}
+            </div>
+          </Tooltip>
+        );
       default:
-        return treatment[columnKey] || "N/A";
+        return getValue(treatment[columnKey]);
     }
   };
 
@@ -67,16 +123,14 @@ function TreatmentsPage() {
           return (
             typeof treatment === "object" &&
             treatment !== null &&
-            (treatment.idTrataments ||
-              (treatment.data && treatment.data.idTrataments))
+            (treatment.id || (treatment.data && treatment.data.id))
           );
         })
         .map((treatmentResponse) => {
           const treatmentData = treatmentResponse.data || treatmentResponse;
           return {
             ...treatmentData,
-            id: treatmentData.idTrataments,
-            key: treatmentData.idTrataments,
+            key: treatmentData.id,
           };
         })
     : [];
@@ -140,13 +194,14 @@ function TreatmentsPage() {
           name="Tratamientos"
           columns={columns}
           initialVisibleColumns={[
-            "idTrataments",
             "petId",
-            "appoinmentIdAppointment",
+            "appointmentId",
+            "typeTreatment",
             "dateStart",
             "dateFinish",
             "frequency",
             "dosage",
+            "descriptiont",
             "actions",
           ]}
           handleCreate={handleCreate}
